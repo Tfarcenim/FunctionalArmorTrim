@@ -27,10 +27,10 @@ public class GameRendererMixin {
         return old;
     }
 
-    @Inject(method = "updateLightTexture",
+    /*@Inject(method = "updateLightTexture",
             at = @At(value = "INVOKE",target = "Lorg/joml/Vector3f;lerp(Lorg/joml/Vector3fc;F)Lorg/joml/Vector3f;",ordinal = 0,remap = false),locals = LocalCapture.PRINT)
     private void checkLocals(float pPartialTicks, CallbackInfo ci, ClientLevel clientlevel, float f, float f1, float f2, float f3, float f4, float f6, float f5) {
 
-    }
+    }*/
 
 }
