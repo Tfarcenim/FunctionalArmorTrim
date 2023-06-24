@@ -129,7 +129,7 @@ public class TrimEffects {
     public static int countTrim(LivingEntity pLivingEntity,Item trim) {
         int i = 0;
         for(ItemStack itemstack : pLivingEntity.getArmorSlots())
-            if (getTrimItem(pLivingEntity.level, itemstack) == trim) i++;
+            if (getTrimItem(pLivingEntity.level(), itemstack) == trim) i++;
 
         return i;
     }

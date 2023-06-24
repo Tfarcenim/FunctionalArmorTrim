@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -14,10 +13,7 @@ public class FunctionalArmorTrim {
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public FunctionalArmorTrim()
-    {
-        // Register the setup method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+    public FunctionalArmorTrim() {
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::attributes);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::breakBlock);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::livingXp);
