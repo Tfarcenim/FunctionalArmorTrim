@@ -112,17 +112,14 @@ public class TrimEffects {
         }
     }
 
-    public static void potionEffect(MobEffectEvent.Added e) {
-
-    }
-
     public static void livinghurt(LivingDamageEvent e) {
         DamageSource source = e.getSource();
         LivingEntity living = e.getEntity();
         Entity attacker = source.getDirectEntity();
         if (attacker instanceof LivingEntity) {
             int quartz = countTrim(living, Items.QUARTZ);
-            attacker.hurt(living.damageSources().thorns(living), quartz);
+            if (quartz > 0)
+                attacker.hurt(living.damageSources().thorns(living), quartz);
         }
     }
 
@@ -134,18 +131,19 @@ public class TrimEffects {
         return i;
     }
 
-    public static ArmorTrim getTrim(Level level, ItemStack stack) {
-        return ArmorTrim.getTrim(level.registryAccess(),stack).orElse(null);
+    @Nullable
+    public static ArmorTrim getTrim(@Nullable Level level, ItemStack stack) {
+        return level == null ? null : ArmorTrim.getTrim(level.registryAccess(),stack).orElse(null);
     }
 
     @Nullable
-    public static TrimMaterial getTrimMaterial(Level level, ItemStack stack) {
+    public static TrimMaterial getTrimMaterial(@Nullable Level level, ItemStack stack) {
         ArmorTrim armorTrim = getTrim(level, stack);
         return armorTrim == null ? null : armorTrim.material().get();
     }
 
     @Nullable
-    public static Item getTrimItem(Level level, ItemStack stack) {
+    public static Item getTrimItem(@Nullable Level level, ItemStack stack) {
         TrimMaterial trimMaterial = getTrimMaterial(level,stack);
         return trimMaterial == null ? null : trimMaterial.ingredient().get();
     }
