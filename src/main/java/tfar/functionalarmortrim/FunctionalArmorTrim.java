@@ -21,5 +21,4 @@ public class FunctionalArmorTrim {
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::fireResist);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::fireDamage);
     }
-
 }

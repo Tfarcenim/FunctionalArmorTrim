@@ -25,7 +25,7 @@ public abstract class ItemEntityMixin extends Entity {
 
     @Inject(method = "hurt",at = @At(value = "INVOKE",target = "Lnet/minecraft/world/item/Item;canBeHurtBy(Lnet/minecraft/world/damagesource/DamageSource;)Z"),cancellable = true)
     private void fireProtect(DamageSource pSource, float pAmount, CallbackInfoReturnable<Boolean> cir) {
-        if (TrimEffects.getTrimItem(level(), getItem()) == Items.NETHERITE_INGOT && pSource.is(DamageTypeTags.IS_FIRE)) {
+        if (pSource.is(DamageTypeTags.IS_FIRE) && TrimEffects.getTrimItem(level(), getItem()) == Items.NETHERITE_INGOT) {
             cir.setReturnValue(false);
         }
     }
