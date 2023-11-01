@@ -18,7 +18,7 @@ import java.util.Iterator;
 public class PiglinAiMixin {
 	@Inject(at = @At(value = "INVOKE",target = "Lnet/minecraft/world/item/ItemStack;makesPiglinsNeutral(Lnet/minecraft/world/entity/LivingEntity;)Z",remap = false),
 			method = "isWearingGold",cancellable = true,locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void init(LivingEntity pLivingEntity, CallbackInfoReturnable<Boolean> cir, Iterator var1, ItemStack itemstack, Item item) {
+	private static void init(LivingEntity pLivingEntity, CallbackInfoReturnable<Boolean> cir, Iterator var1, ItemStack itemstack) {
 		if (TrimEffects.getTrimItem(pLivingEntity.level(), itemstack) == Items.GOLD_INGOT) {
 			cir.setReturnValue(true);
 		}

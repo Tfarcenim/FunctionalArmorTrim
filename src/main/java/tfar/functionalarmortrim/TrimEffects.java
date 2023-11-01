@@ -6,6 +6,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -18,12 +19,18 @@ import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
-import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class TrimEffects {
 
@@ -49,6 +56,17 @@ public class TrimEffects {
         };
     }
 
+    static final Map<Item,Map<Attribute,Function<EquipmentSlot,AttributeModifier>>> TRIM_ATTRIBUTE_MAP = new HashMap<>();
+
+    static {
+        Function<EquipmentSlot,AttributeModifier> plus2modifier = slot -> trim_modifiers_add_2[slot.getIndex()];
+        Function<EquipmentSlot,AttributeModifier> plus1modifier = slot -> trim_modifiers_add_1[slot.getIndex()];
+        Function<EquipmentSlot,AttributeModifier> plus10percentModifier = slot -> trim_modifiers_add_10_percent[slot.getIndex()];
+        TRIM_ATTRIBUTE_MAP.put(Items.IRON_INGOT, Map.of(Attributes.ARMOR,plus2modifier));
+        TRIM_ATTRIBUTE_MAP.put(Items.DIAMOND,Map.of(Attributes.ARMOR,plus2modifier,Attributes.ARMOR_TOUGHNESS,plus2modifier));
+        TRIM_ATTRIBUTE_MAP.put(Items.REDSTONE,Map.of(Attributes.MOVEMENT_SPEED,plus10percentModifier,ForgeMod.STEP_HEIGHT_ADDITION.get(), plus1modifier));
+        TRIM_ATTRIBUTE_MAP.put(Items.COPPER_INGOT,Map.of(ForgeMod.SWIM_SPEED.get(), plus10percentModifier));
+    }
 
     public static void attributes(ItemAttributeModifierEvent e) {
         ItemStack stack = e.getItemStack();
@@ -56,17 +74,8 @@ public class TrimEffects {
         EquipmentSlot slot = e.getSlotType();
         if (item instanceof ArmorItem armorItem && slot == armorItem.getEquipmentSlot()) {
             Item trim = getTrimItem(getWorld(), stack);
-            if (trim == Items.IRON_INGOT) {
-                e.addModifier(Attributes.ARMOR, trim_modifiers_add_2[slot.getIndex()]);
-            } else if (trim == Items.DIAMOND) {
-                e.addModifier(Attributes.ARMOR, trim_modifiers_add_2[slot.getIndex()]);
-                e.addModifier(Attributes.ARMOR_TOUGHNESS, trim_modifiers_add_2[slot.getIndex()]);
-            } else if (trim == Items.REDSTONE) {
-                e.addModifier(Attributes.MOVEMENT_SPEED, trim_modifiers_add_10_percent[slot.getIndex()]);
-                e.addModifier(ForgeMod.STEP_HEIGHT_ADDITION.get(), trim_modifiers_add_1[slot.getIndex()]);
-            } else if (trim == Items.COPPER_INGOT) {
-                e.addModifier(ForgeMod.SWIM_SPEED.get(), trim_modifiers_add_10_percent[slot.getIndex()]);
-            }
+            TRIM_ATTRIBUTE_MAP.getOrDefault(trim,Map.of()).forEach((attribute, equipmentSlotAttributeModifierFunction) ->
+                    e.addModifier(attribute,equipmentSlotAttributeModifierFunction.apply(slot)));
         }
     }
 
