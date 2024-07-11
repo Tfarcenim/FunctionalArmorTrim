@@ -4,7 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Items;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import tfar.functionalarmortrim.Client;
@@ -13,12 +15,13 @@ import tfar.functionalarmortrim.TrimEffects;
 @Mixin(LightTexture.class)
 public class GameRendererMixin {
 
+    @Shadow @Final private Minecraft minecraft;
+
     @ModifyVariable(method = "updateLightTexture",
             at = @At(value = "FIELD",target = "Lnet/minecraft/client/renderer/LightTexture;blockLightRedFlicker:F"),ordinal = 7)
     private float adjustVision(float old) {
-        int amy = TrimEffects.countTrim(Minecraft.getInstance().player, Items.AMETHYST_SHARD);
-        if (amy > 0 && !Minecraft.getInstance().player.hasEffect(MobEffects.NIGHT_VISION)) {
-            return Client.getNightVisionScale(amy);
+        if (!minecraft.player.hasEffect(MobEffects.NIGHT_VISION)) {
+            return (float) Client.getNightVisionScale(minecraft.player);
         }
         return old;
     }

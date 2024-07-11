@@ -25,6 +25,7 @@ import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import tfar.functionalarmortrim.init.ModAttributes;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -40,11 +41,10 @@ public class TrimEffects {
             UUID.fromString("0a2787e9-a297-4ac9-9935-bed6f145e00c"),
             UUID.fromString("eb4dbe61-f520-44fe-81ee-7754188eb320")};
 
-    public static final AttributeModifier[] trim_modifiers_add_2 = createAttributeModGroup(2, AttributeModifier.Operation.ADDITION);
+    public static final AttributeModifier[] trim_modifiers_add_quarter = createAttributeModGroup(.25, AttributeModifier.Operation.ADDITION);
     public static final AttributeModifier[] trim_modifiers_add_1 = createAttributeModGroup(1, AttributeModifier.Operation.ADDITION);
-
+    public static final AttributeModifier[] trim_modifiers_add_2 = createAttributeModGroup(2, AttributeModifier.Operation.ADDITION);
     public static final AttributeModifier[] trim_modifiers_add_5_percent = createAttributeModGroup(0.05, AttributeModifier.Operation.MULTIPLY_TOTAL);
-
     public static final AttributeModifier[] trim_modifiers_add_10_percent = createAttributeModGroup(0.10, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static AttributeModifier[] createAttributeModGroup(double amount, AttributeModifier.Operation op) {
@@ -62,10 +62,13 @@ public class TrimEffects {
         Function<EquipmentSlot,AttributeModifier> plus2modifier = slot -> trim_modifiers_add_2[slot.getIndex()];
         Function<EquipmentSlot,AttributeModifier> plus1modifier = slot -> trim_modifiers_add_1[slot.getIndex()];
         Function<EquipmentSlot,AttributeModifier> plus10percentModifier = slot -> trim_modifiers_add_10_percent[slot.getIndex()];
+        Function<EquipmentSlot,AttributeModifier> plusQuarterModifier = slot -> trim_modifiers_add_quarter[slot.getIndex()];
         TRIM_ATTRIBUTE_MAP.put(Items.IRON_INGOT, Map.of(Attributes.ARMOR,plus2modifier));
         TRIM_ATTRIBUTE_MAP.put(Items.DIAMOND,Map.of(Attributes.ARMOR,plus2modifier,Attributes.ARMOR_TOUGHNESS,plus2modifier));
+        TRIM_ATTRIBUTE_MAP.put(Items.NETHERITE_INGOT, Map.of(Attributes.ARMOR,plus2modifier,Attributes.ARMOR_TOUGHNESS,plus2modifier));
         TRIM_ATTRIBUTE_MAP.put(Items.REDSTONE,Map.of(Attributes.MOVEMENT_SPEED,plus10percentModifier,ForgeMod.STEP_HEIGHT_ADDITION.get(), plus1modifier));
         TRIM_ATTRIBUTE_MAP.put(Items.COPPER_INGOT,Map.of(ForgeMod.SWIM_SPEED.get(), plus10percentModifier));
+        TRIM_ATTRIBUTE_MAP.put(Items.AMETHYST_SHARD,Map.of(ModAttributes.NIGHT_VISION, plusQuarterModifier));
     }
 
     public static void attributes(ItemAttributeModifierEvent e) {
@@ -76,6 +79,16 @@ public class TrimEffects {
             Item trim = getTrimItem(getWorld(), stack);
             TRIM_ATTRIBUTE_MAP.getOrDefault(trim,Map.of()).forEach((attribute, equipmentSlotAttributeModifierFunction) ->
                     e.addModifier(attribute,equipmentSlotAttributeModifierFunction.apply(slot)));
+        }
+    }
+
+    //this is needed because the client thread calls getAttributes, but a direct call to mc.world would crash servers
+    public static Level getWorld() {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server == null) {
+            return Client.getClientWorld();
+        } else {
+            return server.getLevel(Level.OVERWORLD);
         }
     }
 
@@ -97,15 +110,7 @@ public class TrimEffects {
         }
     }
 
-    //this is needed because the client thread calls getAttributes, but a direct call to mc.world would crash servers
-    public static Level getWorld() {
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if (server == null) {
-            return Client.getClientWorld();
-        } else {
-            return server.getLevel(Level.OVERWORLD);
-        }
-    }
+
 
     public static void breakBlock(BlockEvent.BreakEvent e) {
         Player player = e.getPlayer();
