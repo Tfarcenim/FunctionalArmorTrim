@@ -3,10 +3,14 @@ package tfar.functionalarmortrim;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegisterEvent;
+import tfar.functionalarmortrim.config.ConfigHandler;
 import tfar.functionalarmortrim.datagen.ModDatagen;
 import tfar.functionalarmortrim.init.ModAttributes;
 
@@ -19,12 +23,22 @@ public class FunctionalArmorTrim {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(this::register);
         bus.addListener(ModDatagen::start);
+        bus.addListener(this::setup);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::attributes);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::breakBlock);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::livingXp);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::livinghurt);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::fireResist);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::fireDamage);
+        MinecraftForge.EVENT_BUS.addListener(this::reload);
+    }
+
+    private void setup(FMLCommonSetupEvent event) {
+        ConfigHandler.writeIfEmpty();
+    }
+
+    private void reload(AddReloadListenerEvent event) {
+        event.addListener(new TrimEffectReloadListener());
     }
 
 
