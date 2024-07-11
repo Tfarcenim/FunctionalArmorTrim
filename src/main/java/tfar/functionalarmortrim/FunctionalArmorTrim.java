@@ -28,6 +28,7 @@ public class FunctionalArmorTrim {
 
     private void register(RegisterEvent event) {
         event.register(Registries.ATTRIBUTE,id("night_vision"),() -> ModAttributes.NIGHT_VISION);
+        event.register(Registries.ATTRIBUTE,id("fire_resistance"),() -> ModAttributes.FIRE_RESISTANCE);
     }
 
     public static ResourceLocation id(String path) {

@@ -65,7 +65,8 @@ public class TrimEffects {
         Function<EquipmentSlot,AttributeModifier> plusQuarterModifier = slot -> trim_modifiers_add_quarter[slot.getIndex()];
         TRIM_ATTRIBUTE_MAP.put(Items.IRON_INGOT, Map.of(Attributes.ARMOR,plus2modifier));
         TRIM_ATTRIBUTE_MAP.put(Items.DIAMOND,Map.of(Attributes.ARMOR,plus2modifier,Attributes.ARMOR_TOUGHNESS,plus2modifier));
-        TRIM_ATTRIBUTE_MAP.put(Items.NETHERITE_INGOT, Map.of(Attributes.ARMOR,plus2modifier,Attributes.ARMOR_TOUGHNESS,plus2modifier));
+        TRIM_ATTRIBUTE_MAP.put(Items.NETHERITE_INGOT, Map.of(Attributes.ARMOR,plus2modifier,Attributes.ARMOR_TOUGHNESS,plus2modifier,
+                ModAttributes.FIRE_RESISTANCE,plusQuarterModifier));
         TRIM_ATTRIBUTE_MAP.put(Items.REDSTONE,Map.of(Attributes.MOVEMENT_SPEED,plus10percentModifier,ForgeMod.STEP_HEIGHT_ADDITION.get(), plus1modifier));
         TRIM_ATTRIBUTE_MAP.put(Items.COPPER_INGOT,Map.of(ForgeMod.SWIM_SPEED.get(), plus10percentModifier));
         TRIM_ATTRIBUTE_MAP.put(Items.AMETHYST_SHARD,Map.of(ModAttributes.NIGHT_VISION, plusQuarterModifier));
@@ -95,8 +96,8 @@ public class TrimEffects {
     public static void fireResist(LivingAttackEvent e) {
         DamageSource source = e.getSource();
         if (source.is(DamageTypeTags.IS_FIRE)) {
-            int netherite = countTrim(e.getEntity(), Items.NETHERITE_INGOT);
-            if (netherite > 3) {
+            double fire_resistance = e.getEntity().getAttributeValue(ModAttributes.FIRE_RESISTANCE);
+            if (fire_resistance >= 1) {
                 e.setCanceled(true);
             }
         }
@@ -105,8 +106,8 @@ public class TrimEffects {
     public static void fireDamage(LivingHurtEvent e) {
         DamageSource source = e.getSource();
         if (source.is(DamageTypeTags.IS_FIRE)) {
-            int netherite = countTrim(e.getEntity(), Items.NETHERITE_INGOT);
-            e.setAmount(e.getAmount() * (1 - netherite / 4f));
+            double fire_resistance = e.getEntity().getAttributeValue(ModAttributes.FIRE_RESISTANCE);
+            e.setAmount((float) (e.getAmount() * (1 - fire_resistance)));
         }
     }
 

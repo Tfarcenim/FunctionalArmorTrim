@@ -5,6 +5,7 @@
   "refmap": "functionalarmortrim.refmap.json",
   "mixins": [
     "ItemEntityMixin",
+    "LivingEntityMixin",
     "PiglinAiMixin",
     "PlayerMixin",
     "VillagerMixin"
