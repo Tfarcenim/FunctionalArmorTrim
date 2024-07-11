@@ -12,6 +12,6 @@ import tfar.functionalarmortrim.init.ModAttributes;
 public class PlayerMixin {
     @Inject(method = "createAttributes",at = @At("RETURN"))
     private static void addModifiers(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-        cir.getReturnValue().add(ModAttributes.NIGHT_VISION);
+        cir.getReturnValue().add(ModAttributes.NIGHT_VISION).add(ModAttributes.EXPERIENCE_BOOST).add(ModAttributes.GOSSIP_BOOST);
     }
 }

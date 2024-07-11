@@ -7,6 +7,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegisterEvent;
+import tfar.functionalarmortrim.datagen.ModDatagen;
 import tfar.functionalarmortrim.init.ModAttributes;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -17,6 +18,7 @@ public class FunctionalArmorTrim {
     public FunctionalArmorTrim() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(this::register);
+        bus.addListener(ModDatagen::start);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::attributes);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::breakBlock);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::livingXp);
@@ -29,6 +31,9 @@ public class FunctionalArmorTrim {
     private void register(RegisterEvent event) {
         event.register(Registries.ATTRIBUTE,id("night_vision"),() -> ModAttributes.NIGHT_VISION);
         event.register(Registries.ATTRIBUTE,id("fire_resistance"),() -> ModAttributes.FIRE_RESISTANCE);
+        event.register(Registries.ATTRIBUTE,id("experience_boost"),() -> ModAttributes.EXPERIENCE_BOOST);
+        event.register(Registries.ATTRIBUTE,id("thorns"),() -> ModAttributes.THORNS);
+        event.register(Registries.ATTRIBUTE,id("gossip_boost"),() -> ModAttributes.GOSSIP_BOOST);
     }
 
     public static ResourceLocation id(String path) {

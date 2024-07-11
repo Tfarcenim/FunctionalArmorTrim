@@ -12,6 +12,6 @@ import tfar.functionalarmortrim.init.ModAttributes;
 public class LivingEntityMixin {
     @Inject(method = "createLivingAttributes",at = @At("RETURN"))
     private static void addAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-       cir.getReturnValue().add(ModAttributes.FIRE_RESISTANCE);
+       cir.getReturnValue().add(ModAttributes.FIRE_RESISTANCE).add(ModAttributes.THORNS);
     }
 }

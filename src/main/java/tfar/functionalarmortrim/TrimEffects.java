@@ -70,6 +70,9 @@ public class TrimEffects {
         TRIM_ATTRIBUTE_MAP.put(Items.REDSTONE,Map.of(Attributes.MOVEMENT_SPEED,plus10percentModifier,ForgeMod.STEP_HEIGHT_ADDITION.get(), plus1modifier));
         TRIM_ATTRIBUTE_MAP.put(Items.COPPER_INGOT,Map.of(ForgeMod.SWIM_SPEED.get(), plus10percentModifier));
         TRIM_ATTRIBUTE_MAP.put(Items.AMETHYST_SHARD,Map.of(ModAttributes.NIGHT_VISION, plusQuarterModifier));
+        TRIM_ATTRIBUTE_MAP.put(Items.LAPIS_LAZULI,Map.of(ModAttributes.EXPERIENCE_BOOST,plus10percentModifier));
+        TRIM_ATTRIBUTE_MAP.put(Items.QUARTZ,Map.of(ModAttributes.THORNS,plus1modifier));
+        TRIM_ATTRIBUTE_MAP.put(Items.EMERALD,Map.of(ModAttributes.GOSSIP_BOOST,plus10percentModifier));
     }
 
     public static void attributes(ItemAttributeModifierEvent e) {
@@ -115,15 +118,17 @@ public class TrimEffects {
 
     public static void breakBlock(BlockEvent.BreakEvent e) {
         Player player = e.getPlayer();
-        int lapis = countTrim(player,Items.LAPIS_LAZULI);
-        e.setExpToDrop((int) (e.getExpToDrop() * (1 + .1 * lapis)));
+        if (player != null) {
+            double experience_boost = player.getAttributeValue(ModAttributes.EXPERIENCE_BOOST);
+            e.setExpToDrop((int) (e.getExpToDrop() * experience_boost));
+        }
     }
 
     public static void livingXp(LivingExperienceDropEvent e) {
         Player player = e.getAttackingPlayer();
         if (player != null) {
-            int lapis = countTrim(player, Items.LAPIS_LAZULI);
-            e.setDroppedExperience((int) (e.getDroppedExperience() * (1 + .1 * lapis)));
+            double experience_boost = player.getAttributeValue(ModAttributes.EXPERIENCE_BOOST);
+            e.setDroppedExperience((int) (e.getDroppedExperience() * experience_boost));
         }
     }
 
@@ -132,18 +137,10 @@ public class TrimEffects {
         LivingEntity living = e.getEntity();
         Entity attacker = source.getDirectEntity();
         if (attacker instanceof LivingEntity) {
-            int quartz = countTrim(living, Items.QUARTZ);
+            double quartz = living.getAttributeValue(ModAttributes.THORNS);
             if (quartz > 0)
-                attacker.hurt(living.damageSources().thorns(living), quartz);
+                attacker.hurt(living.damageSources().thorns(living), (float) quartz);
         }
-    }
-
-    public static int countTrim(LivingEntity pLivingEntity,Item trim) {
-        int i = 0;
-        for(ItemStack itemstack : pLivingEntity.getArmorSlots())
-            if (getTrimItem(pLivingEntity.level(), itemstack) == trim) i++;
-
-        return i;
     }
 
     @Nullable
