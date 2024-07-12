@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -15,11 +16,14 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tfar.functionalarmortrim.TrimEffects;
 import tfar.functionalarmortrim.init.ModAttributes;
+import tfar.functionalarmortrim.network.PacketHandler;
+import tfar.functionalarmortrim.network.client.S2CConfigPacket;
 
 import java.io.File;
 import java.io.FileReader;
@@ -150,6 +154,8 @@ public class ConfigHandler {
            }
            MAP.put(item,attributeMapMap);
         }
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server != null) server.getPlayerList().getPlayers().forEach(player -> PacketHandler.sendToClient(new S2CConfigPacket(MAP),player));
     }
 
     public static void writeIfEmpty() {
@@ -174,12 +180,20 @@ public class ConfigHandler {
         }
     }
 
-    static String getName(Item item) {
+    public static String getName(Item item) {
         return BuiltInRegistries.ITEM.getKey(item).toString();
     }
 
-    static String getName(Attribute attribute) {
+    public static Item getItem(String s) {
+        return BuiltInRegistries.ITEM.get(new ResourceLocation(s));
+    }
+
+    public static String getName(Attribute attribute) {
         return BuiltInRegistries.ATTRIBUTE.getKey(attribute).toString();
+    }
+
+    public static Attribute getAttribute(String s) {
+        return BuiltInRegistries.ATTRIBUTE.get(new ResourceLocation(s));
     }
 
 }

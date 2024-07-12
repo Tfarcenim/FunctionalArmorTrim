@@ -2,9 +2,10 @@ package tfar.functionalarmortrim;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -13,6 +14,8 @@ import net.minecraftforge.registries.RegisterEvent;
 import tfar.functionalarmortrim.config.ConfigHandler;
 import tfar.functionalarmortrim.datagen.ModDatagen;
 import tfar.functionalarmortrim.init.ModAttributes;
+import tfar.functionalarmortrim.network.PacketHandler;
+import tfar.functionalarmortrim.network.client.S2CConfigPacket;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(FunctionalArmorTrim.MODID)
@@ -31,14 +34,20 @@ public class FunctionalArmorTrim {
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::fireResist);
         MinecraftForge.EVENT_BUS.addListener(TrimEffects::fireDamage);
         MinecraftForge.EVENT_BUS.addListener(this::reload);
+        MinecraftForge.EVENT_BUS.addListener(this::join);
     }
 
     private void setup(FMLCommonSetupEvent event) {
         ConfigHandler.writeIfEmpty();
+        PacketHandler.registerPackets();
     }
 
     private void reload(AddReloadListenerEvent event) {
         event.addListener(new TrimEffectReloadListener());
+    }
+
+    private void join(PlayerEvent.PlayerLoggedInEvent event) {
+        PacketHandler.sendToClient(new S2CConfigPacket(ConfigHandler.MAP), (ServerPlayer) event.getEntity());
     }
 
 

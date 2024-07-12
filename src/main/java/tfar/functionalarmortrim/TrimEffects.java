@@ -20,6 +20,7 @@ import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import tfar.functionalarmortrim.client.ModClient;
 import tfar.functionalarmortrim.config.ConfigHandler;
 import tfar.functionalarmortrim.init.ModAttributes;
 
@@ -40,10 +41,15 @@ public class TrimEffects {
         Item item = stack.getItem();
         EquipmentSlot slot = e.getSlotType();
         if (item instanceof ArmorItem armorItem && slot == armorItem.getEquipmentSlot()) {
-            Item trim = getTrimItem(getWorld(), stack);
-            ConfigHandler.MAP.getOrDefault(trim, Map.of()).forEach((attribute, attributeModifiers) -> {
-                e.addModifier(attribute, attributeModifiers.get(slot));
-            });
+            Level level = getWorld();
+            Item trim = getTrimItem(level, stack);
+            var map = ConfigHandler.MAP;
+
+            if (level.isClientSide) {
+                map = ModClient.MAP;
+            }
+
+            map.getOrDefault(trim, Map.of()).forEach((attribute, attributeModifiers) -> e.addModifier(attribute, attributeModifiers.get(slot)));
         }
     }
 
