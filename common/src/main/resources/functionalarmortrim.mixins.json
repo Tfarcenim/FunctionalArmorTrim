@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "tfar.functionalarmortrim.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AttributesMixin",
+    "ItemEntityMixin",
+    "LivingEntityMixin",
+    "PiglinAiMixin",
+    "PlayerMixin",
+    "VillagerMixin"
+  ],
+  "client": [
+    "GameRendererMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+
