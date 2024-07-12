@@ -8,7 +8,6 @@
     "AttributesMixin",
     "ItemEntityMixin",
     "LivingEntityMixin",
-    "PiglinAiMixin",
     "PlayerMixin",
     "VillagerMixin"
   ],

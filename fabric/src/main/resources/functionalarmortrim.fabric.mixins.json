@@ -9,6 +9,7 @@
     "EntityMixinFabric",
     "ItemStackMixinFabric",
     "LivingEntityMixinFabric",
+    "PiglinAiMixinFabric",
     "PlayerMixinFabric"
   ],
   "client": [

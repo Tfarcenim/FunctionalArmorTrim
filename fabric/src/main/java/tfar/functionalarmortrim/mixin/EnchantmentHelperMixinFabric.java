@@ -16,7 +16,7 @@ import tfar.functionalarmortrim.FunctionalArmorTrim;
 @Mixin(EnchantmentHelper.class)
 public class EnchantmentHelperMixinFabric {
 
-    @Inject(method = "processMobExperience",at = @At(value = "RETURN",ordinal = 0),locals = LocalCapture.PRINT)
+    @Inject(method = "processMobExperience",at = @At(value = "RETURN",ordinal = 0),locals = LocalCapture.CAPTURE_FAILHARD)
     private static void adjXp(ServerLevel level, Entity killer, Entity mob, int experience, CallbackInfoReturnable<Integer> cir, LivingEntity livingEntity, MutableFloat mutableFloat) {
         if (killer instanceof Player killerPlayer) {
             mutableFloat.setValue(mutableFloat.floatValue() * FunctionalArmorTrim.livingExperienceDrops(killerPlayer));
