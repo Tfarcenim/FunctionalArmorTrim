@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "tfar.functionalarmortrim.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "EnchantmentHelperMixinFabric",
+    "EntityMixinFabric",
+    "ItemStackMixinFabric",
+    "LivingEntityMixinFabric",
+    "PlayerMixinFabric"
+  ],
+  "client": [
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+  

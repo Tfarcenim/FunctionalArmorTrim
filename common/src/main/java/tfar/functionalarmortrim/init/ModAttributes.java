@@ -15,7 +15,7 @@ public class ModAttributes {
     public static final Holder<Attribute> THORNS = register("thorns",new RangedAttribute("enchantment.minecraft.thorns",0,0,2048).setSyncable(true));
     public static final Holder<Attribute> GOSSIP_BOOST = register("gossip_boost",new RangedAttribute(FunctionalArmorTrim.MOD_ID +".gossip_boost",1,0,2048).setSyncable(true));
 
-    private static Holder<Attribute> register(String pName, Attribute pAttribute) {
+    public static Holder<Attribute> register(String pName, Attribute pAttribute) {
         return Registry.registerForHolder(BuiltInRegistries.ATTRIBUTE, FunctionalArmorTrim.id(pName), pAttribute);
     }
 

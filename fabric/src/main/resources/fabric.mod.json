@@ -16,7 +16,7 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-          "tfar.functionalarmortrim.ExampleMod"
+          "tfar.functionalarmortrim.FunctionalArmorTrimFabric"
         ]
     },
     "mixins": [

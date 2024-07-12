@@ -14,7 +14,6 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import tfar.functionalarmortrim.init.ModAttributes;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
@@ -47,6 +46,10 @@ public class FunctionalArmorTrim {
         return breaker instanceof Player player ? player.getAttributeValue(ModAttributes.EXPERIENCE_BOOST) : 1;
     }
 
+    public static double livingExperienceDrops(Player player) {
+        return player != null ? player.getAttributeValue(ModAttributes.EXPERIENCE_BOOST) : 1;
+    }
+
     public static void livingDamagePost(LivingEntity target,DamageSource source) {
         Entity attacker = source.getDirectEntity();
         if (attacker instanceof LivingEntity) {
@@ -68,18 +71,15 @@ public class FunctionalArmorTrim {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID,path);
     }
 
-    @Nullable
     public static ArmorTrim getTrim(ItemStack stack) {
         return stack.get(DataComponents.TRIM);
     }
 
-    @Nullable
     public static TrimMaterial getTrimMaterial(ItemStack stack) {
         ArmorTrim armorTrim = getTrim(stack);
         return armorTrim == null ? null : armorTrim.material().value();
     }
 
-    @Nullable
     public static Item getTrimItem(ItemStack stack) {
         TrimMaterial trimMaterial = getTrimMaterial(stack);
         return trimMaterial == null ? null : trimMaterial.ingredient().value();

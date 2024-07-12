@@ -16,6 +16,7 @@ public class ModLangProvider extends LanguageProvider {
     protected void addTranslations() {
         addAttribute(ModAttributes.EXPERIENCE_BOOST,"Experience Boost");
         addAttribute(ModAttributes.GOSSIP_BOOST,"Gossip Boost");
+        add(FunctionalArmorTrim.MOD_ID +".swim_speed","Swim Speed");
     }
 
     protected void addAttribute(Holder<Attribute> attribute, String value) {
