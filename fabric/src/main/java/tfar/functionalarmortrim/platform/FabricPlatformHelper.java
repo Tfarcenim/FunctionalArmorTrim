@@ -40,7 +40,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
     public <MSG extends S2CModPacket> void registerClientPacket(CustomPacketPayload.Type<MSG> type, StreamCodec<RegistryFriendlyByteBuf, MSG> streamCodec) {
         PayloadTypeRegistry.playS2C().register(type,streamCodec);//payload needs to be registered on server/client, packethandler is client only
         if (MixinEnvironment.getCurrentEnvironment().getSide() == MixinEnvironment.Side.CLIENT) {
-            ClientPlayNetworking.registerGlobalReceiver(type,(payload, context) -> payload.handleClient());
+            ClientPlayNetworking.registerGlobalReceiver(type,(payload, context) -> context.client().execute(payload::handleClient));
         }
     }
 

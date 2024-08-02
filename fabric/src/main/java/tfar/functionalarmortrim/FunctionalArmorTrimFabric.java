@@ -17,6 +17,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import tfar.functionalarmortrim.client.ModClient;
 import tfar.functionalarmortrim.config.ConfigHandler;
 import tfar.functionalarmortrim.init.ModAttributes;
+import tfar.functionalarmortrim.network.PacketHandler;
 import tfar.functionalarmortrim.platform.Services;
 
 import java.util.Map;
@@ -37,6 +38,7 @@ public class FunctionalArmorTrimFabric implements ModInitializer {
         // to load your mod. You can access Fabric and Common code in this
         // project.
 
+        PacketHandler.registerPackets();
         // Use Fabric to bootstrap the Common mod.
         FunctionalArmorTrim.init();
     }
