@@ -130,7 +130,7 @@ public class ConfigHandler {
             String key = entry.getKey();
             ResourceLocation location = ResourceLocation.parse(key);
            if (!BuiltInRegistries.ITEM.containsKey(location)) {
-               LOGGER.info("Skipping unregistered item {}",key);
+               LOGGER.warn("Skipping unregistered item {}",key);
                continue;
             }
            Item item = BuiltInRegistries.ITEM.get(location);
@@ -141,7 +141,7 @@ public class ConfigHandler {
                ResourceLocation attrLocation = ResourceLocation.parse(obj.get("attribute").getAsString());
                Optional<Holder.Reference<Attribute>> attribute = BuiltInRegistries.ATTRIBUTE.getHolder(attrLocation);
                if (attribute.isEmpty()) {
-                   LOGGER.info("Skipping unregistered attribute {}",attrLocation);
+                   LOGGER.warn("Skipping unregistered attribute {}",attrLocation);
                    continue;
                }
                AttributeModifier.Operation operation = AttributeModifier.Operation.valueOf(obj.get("operation").getAsString().toUpperCase(Locale.ROOT));
