@@ -20,6 +20,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import tfar.functionalarmortrim.TrimEffects;
 import tfar.functionalarmortrim.init.ModAttributes;
 import tfar.functionalarmortrim.network.PacketHandler;
@@ -139,18 +140,21 @@ public class ConfigHandler {
            Map<Attribute,Map<EquipmentSlot,AttributeModifier>> attributeMapMap = new HashMap<>();
            for (JsonElement element : mods) {
                JsonObject obj = element.getAsJsonObject();
-               Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(new ResourceLocation(obj.get("attribute").getAsString()));
-               AttributeModifier.Operation operation = AttributeModifier.Operation.valueOf(obj.get("operation").getAsString().toUpperCase(Locale.ROOT));
-               double amount = obj.get("amount").getAsDouble();
-               Map<EquipmentSlot,AttributeModifier> attributeModifierMap = new HashMap<>();
-               for (EquipmentSlot slot : EquipmentSlot.values()) {
-                   if (slot.isArmor()) {
-                       UUID uuid = TrimEffects.trim_slot_uuids[slot.getIndex()];
-                       AttributeModifier modifier = new AttributeModifier(uuid,"Armor Trim Boost",amount,operation);
-                       attributeModifierMap.put(slot,modifier);
+               String attributeID = obj.get("attribute").getAsString();
+               Optional<Attribute> optionalAttribute = BuiltInRegistries.ATTRIBUTE.getOptional(new ResourceLocation(attributeID));
+               optionalAttribute.ifPresentOrElse(attribute1 -> {
+                   AttributeModifier.Operation operation = AttributeModifier.Operation.valueOf(obj.get("operation").getAsString().toUpperCase(Locale.ROOT));
+                   double amount = obj.get("amount").getAsDouble();
+                   Map<EquipmentSlot, AttributeModifier> attributeModifierMap = new HashMap<>();
+                   for (EquipmentSlot slot : EquipmentSlot.values()) {
+                       if (slot.isArmor()) {
+                           UUID uuid = TrimEffects.trim_slot_uuids[slot.getIndex()];
+                           AttributeModifier modifier = new AttributeModifier(uuid, "Armor Trim Boost", amount, operation);
+                           attributeModifierMap.put(slot, modifier);
+                       }
                    }
-               }
-               attributeMapMap.put(attribute,attributeModifierMap);
+                   attributeMapMap.put(attribute1, attributeModifierMap);
+               },() -> LOGGER.warn("Attribute: {} not registered, ignoring", attributeID));
            }
            MAP.put(item,attributeMapMap);
         }
@@ -188,8 +192,11 @@ public class ConfigHandler {
         return BuiltInRegistries.ITEM.get(new ResourceLocation(s));
     }
 
+    //getKey can be null
+    @Nullable
     public static String getName(Attribute attribute) {
-        return BuiltInRegistries.ATTRIBUTE.getKey(attribute).toString();
+        ResourceLocation rl = BuiltInRegistries.ATTRIBUTE.getKey(attribute);
+        return rl == null ? null : rl.toString();
     }
 
     public static Attribute getAttribute(String s) {
